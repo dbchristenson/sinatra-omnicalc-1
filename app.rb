@@ -11,14 +11,20 @@ end
 
 get("/square/results") do
   @number = params.fetch("number").to_f
-  @square = (@number ** 2).to_fs()
+  @square = (@number ** 2).round(2)
+
   erb :square_results
 end
 
 get("/square_root/new") do
+  erb :sqrt_new
 end
 
 get("/square_root/results") do
+  @number = params.fetch("number").to_f
+  @square_root = Math.sqrt(@number).round(2)
+
+  erb :sqrt_results
 end
 
 get("/payment/new") do
