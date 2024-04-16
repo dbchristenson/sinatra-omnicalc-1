@@ -31,19 +31,27 @@ get("/payment/new") do
   erb :payment_new
 end
 
+def to_currency(number)
+  formatted_number = '%.2f' % number
+  integer, decimal = formatted_number.split('.')
+  integer_with_commas = integer.chars.to_a.reverse.each_slice(3).map(&:join).join(',').reverse
+  "$#{integer_with_commas}.#{decimal}"
+end
+
 get("/payment/results") do
   apr = params.fetch("apr").to_f
   @apr = format('%.4f', apr) + '%'
   @years = params.fetch("years").to_f
   @monthly_periods = (@years * 12).to_i
   principal = params.fetch("principal").to_f.round(2)
-  @principal = sprintf("$%.2f", principal)
+  @principal = to_currency(principal)
 
   r = (apr / 100) / 12
   @numerator = r * (principal)
   @denominator = 1 - ((1 + r) ** -@monthly_periods)
 
-  @payment = sprintf("$%.2f", (@numerator / @denominator))
+  @payment = (@numerator / @denominator)
+  @payment = to_currency(@payment)
 
   erb :payment_results
 end
