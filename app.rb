@@ -11,7 +11,7 @@ end
 
 get("/square/results") do
   @number = params.fetch("number").to_f
-  @square = (@number ** 2).round(2)
+  @square = (@number ** 2)
 
   erb :square_results
 end
@@ -22,7 +22,7 @@ end
 
 get("/square_root/results") do
   @number = params.fetch("number").to_f
-  @square_root = Math.sqrt(@number).round(2)
+  @square_root = Math.sqrt(@number)
 
   erb :sqrt_results
 end
@@ -32,16 +32,18 @@ get("/payment/new") do
 end
 
 get("/payment/results") do
-  @apr = params.fetch("apr").to_f
+  apr = params.fetch("apr").to_f
+  @apr = format('%.4f', apr) + '%'
   @years = params.fetch("years").to_f
   @monthly_periods = (@years * 12).to_i
-  @principal = params.fetch("principal").to_f.round(2)
+  principal = params.fetch("principal").to_f.round(2)
+  @principal = sprintf("$%.2f", principal)
 
-  r = (@apr / 100) / 12
-  @numerator = r * (@principal)
+  r = (apr / 100) / 12
+  @numerator = r * (principal)
   @denominator = 1 - ((1 + r) ** -@monthly_periods)
 
-  @payment = (@numerator / @denominator).round(2)
+  @payment = sprintf("$%.2f", (@numerator / @denominator))
 
   erb :payment_results
 end
