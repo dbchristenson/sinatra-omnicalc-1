@@ -32,13 +32,14 @@ get("/payment/new") do
 end
 
 get("/payment/results") do
-  @apr = params.fetch("apr_input").to_f
-  @years = params.fetch("years_input").to_f
+  @apr = params.fetch("apr").to_f
+  @years = params.fetch("years").to_f
   @monthly_periods = (@years * 12).to_i
-  @principal = params.fetch("principal_input").to_f
+  @principal = params.fetch("principal").to_f.round(2)
 
+  r = (@apr / 100) / 12
   @numerator = r * (@principal)
-  @denominator = 1 - ((1 + @apr) ** -@monthly_periods)
+  @denominator = 1 - ((1 + r) ** -@monthly_periods)
 
   @payment = (@numerator / @denominator).round(2)
 
